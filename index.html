@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="container">
-        <h4 class="title">Drinking Wheel</h4>
+        <h4 class="title">Lucky Spin</h4>
         <div id="spinButton" class="wheel-container">
             <canvas id="wheelCanvas" class="wheel"></canvas>
            <div  id="spinButton" class="wheel-pointer"></div>
@@ -225,34 +225,36 @@ const innerCircle = (ctx, radius) => {
     ctx.fill();
 };
 
-const spinSound = document.getElementById("spinSound");
+    const spinSound = document.getElementById("spinSound");
 
-const spinClick = () => {
-    if (!ready || names.length === 0) return;
-    ready = false;
+    const spinClick = () => {
+        if (!ready || names.length === 0) return;
+        ready = false;
 
-    // Play the spin sound
-    spinSound.currentTime = 0; // Restart the sound if it was played earlier
-    spinSound.play();
+        const index = Math.floor(Math.random() * names.length);
+        const angle = 360 / names.length;
+        const min = index * angle + 1;
+        const max = min + angle - 1;
+        const random = Math.floor(Math.random() * (max - min + 1) + min);
+        const duration = Math.floor(Math.random() * (10 - 5 + 1) + 5);
+        const degree = 3600 * repeat + 90 + random;
 
-    const index = Math.floor(Math.random() * names.length);
-    const angle = 360 / names.length;
-    const min = index * angle + 1;
-    const max = min + angle - 1;
-    const random = Math.floor(Math.random() * (max - min + 1) + min);
-    const duration = Math.floor(Math.random() * (10 - 5 + 1) + 5);
-    const degree = 3600 * repeat + 90 + random;
+        // Adjust the playback rate of the spin sound
+        spinSound.playbackRate = spinSound.duration / duration; // Speed up or slow down the sound
+        spinSound.currentTime = 0; // Restart the sound
+        spinSound.play();
 
-    canvas.style.transition = `transform ${duration}s cubic-bezier(0.33, 1, 0.68, 1)`;
-    canvas.style.transform = `rotate(${-degree}deg)`;
-    repeat++;
+        canvas.style.transition = `transform ${duration}s cubic-bezier(0.33, 1, 0.68, 1)`;
+        canvas.style.transform = `rotate(${-degree}deg)`;
+        repeat++;
 
-    setTimeout(() => {
-        ready = true;
-        winnerName.textContent = names[index];
-        winnerPopup.classList.add("show");
-    }, duration * 1000);
-};
+        setTimeout(() => {
+            ready = true;
+            winnerName.textContent = names[index];
+            winnerPopup.classList.add("show");
+        }, duration * 1000);
+    };
+
 
 spinButton.addEventListener("click", spinClick);
 closePopup.addEventListener("click", () => {
